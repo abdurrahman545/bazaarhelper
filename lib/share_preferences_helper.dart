@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPreferencesHelper {
   static const _kExpensesKey = 'expenses';
 
+//saving expenses from an user
   static Future<void> saveExpense(Expense expense) async {
     final prefs = await SharedPreferences.getInstance();
     final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
@@ -12,6 +13,7 @@ class SharedPreferencesHelper {
     await prefs.setStringList(_kExpensesKey, expensesJson);
   }
 
+//showing the expenses
   static Future<List<Expense>> getExpenses() async {
     final prefs = await SharedPreferences.getInstance();
     final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
@@ -21,6 +23,7 @@ class SharedPreferencesHelper {
     }).toList();
   }
 
+// updating the expenses
   static Future<void> updateExpense(Expense oldExpense, Expense updatedExpense) async {
     final prefs = await SharedPreferences.getInstance();
     final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
@@ -35,6 +38,7 @@ class SharedPreferencesHelper {
     }
   }
 
+//deleting expense from an user
   static Future<void> deleteExpense(Expense expense) async {
     final prefs = await SharedPreferences.getInstance();
     final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
