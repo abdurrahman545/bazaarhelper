@@ -3,48 +3,47 @@ import 'package:bazaarhelper_final/model/expences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
-  static const _kExpensesKey = 'expenses';
+  static const String _kExpensesKey = 'expenses';
 
-//saving expenses from an user
+  // Save an expense
   static Future<void> saveExpense(Expense expense) async {
-    final prefs = await SharedPreferences.getInstance();
-    final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
-    expensesJson.add(jsonEncode(expense.toJson())); // Convert the expense to JSON string
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
+    expensesJson.add(jsonEncode(expense.toJson())); // Convert expense to JSON string
     await prefs.setStringList(_kExpensesKey, expensesJson);
   }
 
-//showing the expenses
+  // Retrieve all expenses
   static Future<List<Expense>> getExpenses() async {
-    final prefs = await SharedPreferences.getInstance();
-    final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
-    return expensesJson.map((expenseJson) {
-      // Convert JSON string back to Expense object
-      return Expense.fromJson(jsonDecode(expenseJson));
-    }).toList();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
+    return expensesJson
+        .map((String expenseJson) => Expense.fromJson(jsonDecode(expenseJson)))
+        .toList();
   }
 
-// updating the expenses
+  // Update an expense
   static Future<void> updateExpense(Expense oldExpense, Expense updatedExpense) async {
-    final prefs = await SharedPreferences.getInstance();
-    final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
 
-    final oldExpenseJson = jsonEncode(oldExpense.toJson());
-    final updatedExpenseJson = jsonEncode(updatedExpense.toJson());
+    final String oldExpenseJson = jsonEncode(oldExpense.toJson());
+    final String updatedExpenseJson = jsonEncode(updatedExpense.toJson());
 
-    final index = expensesJson.indexOf(oldExpenseJson);
+    final int index = expensesJson.indexOf(oldExpenseJson);
     if (index != -1) {
       expensesJson[index] = updatedExpenseJson;
       await prefs.setStringList(_kExpensesKey, expensesJson);
     }
   }
 
-//deleting expense from an user
+  // Delete an expense
   static Future<void> deleteExpense(Expense expense) async {
-    final prefs = await SharedPreferences.getInstance();
-    final expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> expensesJson = prefs.getStringList(_kExpensesKey) ?? [];
 
-    final expenseJson = jsonEncode(expense.toJson());
-    expensesJson.remove(expenseJson);
+    final String expenseJson = jsonEncode(expense.toJson());
+    expensesJson.removeWhere((String item) => item == expenseJson);
 
     await prefs.setStringList(_kExpensesKey, expensesJson);
   }
